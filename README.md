@@ -13,7 +13,7 @@
 
   <br />
   <!-- Replace this URL with a real screenshot of your Grafana Dashboard -->
-  <img src="https://via.placeholder.com/800x450?text=Insert+Grafana+Screenshot+Here" alt="Grafana Dashboard" width="100%" />
+  <img src="./assets/dashboard.png" alt="Grafana Dashboard" width="100%" />
 </div>
 
 <hr />
@@ -152,6 +152,11 @@ if (password !== user.password) {
   return res.status(401).send('Unauthorized');
 }
 ```
+<hr>
+<div align="center">
+<h2>Custom Log</h2>
+<img src="./assets/custom-log.png" alt="customlog Dashboard" width="100%" />
+</div>
 
 ### 7. `trackRoute(req, res, responseTimeMs)`
 **What it does:** Manually tracks an HTTP route's performance.  
