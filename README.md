@@ -13,7 +13,7 @@
 
   <br />
   <!-- Replace this URL with a real screenshot of your Grafana Dashboard -->
-  <img src="./assets/dashboard.png" alt="Grafana Dashboard" width="100%" />
+  <img src="./assets/custom-log.png" alt="Grafana Dashboard" width="100%" />
 </div>
 
 <hr />
@@ -155,7 +155,7 @@ if (password !== user.password) {
 <hr>
 <div align="center">
 <h2>Custom Log</h2>
-<img src="./assets/custom-log.png" alt="customlog Dashboard" width="100%" />
+<img src="./assets/dashboard.png" alt="customlog Dashboard" width="100%" />
 </div>
 
 ### 7. `trackRoute(req, res, responseTimeMs)`
