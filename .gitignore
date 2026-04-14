@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Secrets and Environment Variables
+.env
+.env.local
+
+# Docker
+.docker/
+
+# Mac OS
+.DS_Store
+
+# IDEs
+.idea/
+.vscode/

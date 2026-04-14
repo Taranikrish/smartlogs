@@ -1,0 +1,33 @@
+{
+  "name": "smartlogs",
+  "version": "1.0.0",
+  "description": "A Zero-Config monitoring toolkit for Node.js. Auto-tracks routes, CPU, memory, and code bottlenecks via Prometheus and Grafana.",
+  "license": "MIT",
+  "author": "Krish Tarani",
+  "type": "module",
+  "main": "index.js",
+  "homepage": "https://github.com/Taranikrish/smartlogs#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Taranikrish/smartlogs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Taranikrish/smartlogs/issues"
+  },
+  "keywords": [
+    "monitoring",
+    "prometheus",
+    "grafana",
+    "express",
+    "telemetry",
+    "apm",
+    "logging",
+    "performance"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "prom-client": "^15.1.3"
+  }
+}

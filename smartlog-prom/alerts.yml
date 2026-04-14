@@ -1,0 +1,28 @@
+groups:
+  - name: Smartlogs_alerts
+    rules:
+
+      # alert if error rate goes above 5%
+      - alert: HighErrorRate
+        expr: |
+          rate(Smartlogs_errors_total[1m]) /
+          rate(Smartlogs_http_requests_total[1m]) > 0.05
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is above 5% for more than 1 minute"
+
+      # alert if response time p95 goes above 2 seconds
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.95,
+            rate(Smartlogs_http_response_time_seconds_bucket[1m])
+          ) > 2
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High latency detected"
+          description: "95th percentile response time is above 2 seconds"

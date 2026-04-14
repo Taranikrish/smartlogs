@@ -1,0 +1,14 @@
+# SmartLogs Configuration
+
+# 1. Monitoring Stack Ports
+# Change these if the defaults (3058 and 9090) are already in use
+GRAFANA_PORT=3058
+PROMETHEUS_PORT=9090
+
+# 2. Data Retention
+# How long Prometheus should keep your metrics history (e.g. 15d, 30d, 1y)
+RETENTION_TIME=30d
+
+# 3. Your App Details
+# The port where your Node.js/Express app is running
+APP_PORT=5000

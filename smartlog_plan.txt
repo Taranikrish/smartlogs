@@ -1,0 +1,194 @@
+smartlog — PROJECT PLAN
+========================
+
+WHAT YOU ARE BUILDING
+----------------------
+An open-source Node.js monitoring toolkit.
+Developers install your npm package, add one line to their Express app,
+run "docker-compose up", and get a full live monitoring dashboard.
+No config. No signup. No cloud.
+
+Stack: npm package, Prometheus, Grafana, Docker Compose, Node.js, prom-client
+
+
+6 FEATURES
+-----------
+
+1. App Health
+   - Uptime, memory usage, CPU tracked automatically
+   - Starts the moment smartlog.init() is called
+   - No extra code needed from the developer
+
+2. Route Metrics
+   - Per-route request count, response time (avg, p95), error rate
+   - Tracked automatically by middleware for every Express route
+
+3. Error Log
+   - Every unhandled error captured with:
+     timestamp, route, error message, HTTP status
+   - Shown as a live log on the Grafana dashboard
+
+4. Error Location
+   - File name and line number extracted from error stack trace
+   - Developer sees exactly where in their code it failed
+
+5. Manual Functions (developer calls these anywhere in their code)
+   - smartlog.logError(err, { route: '/login' })
+   - smartlog.trackFailure({ route: '/pay', reason: 'DB timeout' })
+   - smartlog.trackRoute(req, res, responseTime)
+   - All data pushed live to the dashboard
+
+6. Configurable Retention
+   - User sets data retention in smartlog.config.yml
+   - Default: 30 days
+   - Docker Compose passes the value to Prometheus automatically
+
+
+HOW IT WORKS (user flow)
+-------------------------
+
+Step 1 — Clone and start the monitoring stack:
+   git clone github.com/Taranikrish/smartlog
+   cd smartlog
+   docker-compose up
+
+Step 2 — Install the npm package in their own app:
+   npm install smartlog-client
+
+Step 3 — Add one line to their Express app:
+   const smartlog = require('smartlog-client');
+   smartlog.init();
+   app.use(smartlog.middleware());
+
+Step 4 — Open dashboard:
+   localhost:3000  →  Grafana dashboard (everything live)
+   localhost:9090  →  Prometheus (raw metrics)
+
+Data flow:
+   Their Express App
+        ↓  (smartlog middleware adds /metrics endpoint)
+   Prometheus scrapes /metrics every 15 seconds
+        ↓
+   Grafana reads from Prometheus
+        ↓
+   Live dashboard at localhost:3000
+
+
+FILE STRUCTURE
+--------------
+
+smartlog/
+├── smartlog-client/          ← npm package (what you publish)
+│   ├── index.js              ← init, middleware, manual functions
+│   ├── metrics.js            ← prom-client metric definitions
+│   └── package.json
+│
+├── prometheus/
+│   ├── prometheus.yml        ← scrape config (points to user's app)
+│   └── alerts.yml            ← alert rules (error rate, latency)
+│
+├── grafana/
+│   ├── provisioning/
+│   │   └── dashboards.yml    ← auto-loads dashboard on startup
+│   └── dashboards/
+│       └── smartlog.json     ← your pre-built dashboard config
+│
+├── smartlog.config.yml       ← user sets retention period, app port
+├── docker-compose.yml        ← wires Prometheus + Grafana + config
+└── README.md                 ← quickstart guide + API docs
+
+
+WEEK BY WEEK ROADMAP
+---------------------
+
+Week 1 — npm package
+   - Set up prom-client
+   - Define metrics: health, route counters, error counters, histograms
+   - Write init(), middleware(), logError(), trackFailure(), trackRoute()
+   - Test locally against a simple Express app
+   - Make sure /metrics endpoint exposes data correctly
+
+Week 2 — Prometheus
+   - Write prometheus.yml scrape config targeting user's app /metrics
+   - Write alerts.yml — alert if error rate > 5%, latency > 2s
+   - Run Prometheus via Docker
+   - Verify metrics are being collected and stored
+
+Week 3 — Grafana dashboard
+   - Import base Node.js dashboard (Grafana ID: 11159)
+   - Customize panels: route breakdown, error log, failure location, health
+   - Export as smartlog.json
+   - Set up auto-provisioning so dashboard loads on startup automatically
+
+Week 4 — Polish and publish
+   - Write docker-compose.yml wiring everything together
+   - Add smartlog.config.yml for configurable retention
+   - Write README with quickstart, architecture diagram, API reference
+   - Publish npm package (npm publish)
+   - Push to GitHub with a clean repo structure
+
+
+MANUAL FUNCTION API REFERENCE
+------------------------------
+
+// Initialize — call once at app startup
+smartlog.init()
+
+// Middleware — add to Express, auto-tracks all routes
+app.use(smartlog.middleware())
+
+// Log an error manually (call anywhere in your code)
+smartlog.logError(err, {
+  route: '/login',       // optional
+  userId: '123'          // optional extra context
+})
+
+// Track a specific failure point
+smartlog.trackFailure({
+  route: '/payment',
+  reason: 'DB timeout',
+  severity: 'critical'   // 'low' | 'medium' | 'critical'
+})
+
+// Manually track a route (if not using middleware)
+smartlog.trackRoute(req, res, responseTimeMs)
+
+
+RESUME BULLET (for your resume)
+---------------------------------
+Built smartlog, an open-source monitoring toolkit for Node.js — an npm
+middleware package instruments any Express app in one line, exposing custom
+Prometheus metrics including route-level latency, error logs with stack trace
+location, and app health, visualized through auto-provisioned Grafana
+dashboards deployable via Docker Compose.
+
+
+GRAFANA DASHBOARD IDS TO IMPORT
+---------------------------------
+- Node.js Application Dashboard  →  ID: 11159
+- Express.js metrics              →  ID: 14565
+(Import these in Grafana UI or reference in provisioning JSON)
+
+
+PROMETHEUS CONFIG (prometheus.yml)
+------------------------------------
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'smartlog-app'
+    static_configs:
+      - targets: ['host.docker.internal:5000']
+        # replace 5000 with user's app port
+
+
+DOCKER COMPOSE SERVICES
+-------------------------
+Services to define in docker-compose.yml:
+  - prometheus   (port 9090)
+  - grafana      (port 3000)
+
+Environment variables to pass:
+  - GF_SECURITY_ADMIN_PASSWORD (grafana login)
+  - Prometheus retention: --storage.tsdb.retention.time=30d
+    (read from smartlog.config.yml)
