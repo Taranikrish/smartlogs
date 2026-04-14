@@ -1,5 +1,5 @@
 {
-  "name": "smartlogs",
+  "name": "smartlogs-client",
   "version": "1.0.0",
   "description": "A Zero-Config monitoring toolkit for Node.js. Auto-tracks routes, CPU, memory, and code bottlenecks via Prometheus and Grafana.",
   "license": "MIT",
